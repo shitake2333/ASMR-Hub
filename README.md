@@ -1,5 +1,7 @@
 # ASMR Hub
 
+**简体中文** | [English](README.en.md)
+
 ASMR Hub 是一个跨平台 Flutter 应用，聚合并播放来自多平台的 ASMR 内容，
 支持下载与直播录制。
 
