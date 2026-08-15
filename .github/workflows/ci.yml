@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  analyze-test:
+    name: Analyze & Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.0
+          cache: true
+
+      # The Dart/Flutter SDK now bundles everything needed for analyze/test.
+      - name: Enable Flutter desktop (Linux)
+        run: flutter config --enable-linux-desktop
+
+      - name: Install FFmpeg dev libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            pkg-config \
+            libavformat-dev libavcodec-dev libavutil-dev libswresample-dev
+
+      # Offline FFmpeg tests (ffmpeg_mp3 etc.) exercise the native bridge, so
+      # compile it against the system FFmpeg first. FfmpegBridge.instance is
+      # null when this step is skipped, and those tests would fail.
+      - name: Build FFmpeg bridge (Linux)
+        run: bash tool/build_ffmpeg_bridge_posix.sh
+
+      - name: Pub get
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
+
+      # Only test/ runs by default; network-dependent tests live in
+      # test_network/ (run them locally with: flutter test test_network).
+      - name: Test
+        run: flutter test
+
+      - name: Format check (lib, test)
+        run: dart format --output=none --set-exit-if-changed lib test

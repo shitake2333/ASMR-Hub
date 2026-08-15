@@ -1,0 +1,478 @@
+{
+  "settingsTitle": "Settings",
+  "accountSettings": "Account",
+  "appearanceSettings": "Appearance",
+  "darkMode": "Dark Mode",
+  "darkModeSubtitle": "Switch application theme",
+  "themeColor": "Theme Color",
+  "themeColorSubtitle": "Choose application primary color",
+  "fontSettings": "Font Settings",
+  "fontSettingsSubtitle": "Adjust font style and size",
+  "fontFamily": "Font Family",
+  "defaultFont": "Default",
+  "fontSize": "Font Size",
+  "systemDefault": "System Default",
+  "playSettings": "Playback",
+  "sourceAccountManagement": "Source Account Management",
+  "sourceAccountManagementSubtitle": "Manage login status of platforms",
+  "autoPlay": "Auto Play",
+  "autoPlaySubtitle": "Automatically play next song",
+  "sleepTimer": "Sleep Timer",
+  "sleepTimerSubtitle": "{minutes} minutes later stop playing",
+  "@sleepTimerSubtitle": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "sleepTimerActiveTitle": "Sleep timer active",
+  "sleepTimerEndsAt": "Playback stops at {time}",
+  "sleepTimerRemaining": "{time} remaining",
+  "sleepTimerPresetLabel": "Quick presets",
+  "sleepTimerCustomLabel": "Custom",
+  "sleepTimerCustomHint": "Minutes (1-480)",
+  "sleepTimerOff": "Turn off timer",
+  "sleepTimerOffHint": "Stops playback when the timer ends",
+  "sleepTimerPlayUntilEnd": "Stop at end of track",
+  "sleepTimerSetStart": "Start timer",
+  "smartSleepDetection": "Smart Sleep Detection",
+  "smartSleepDetectionSubtitle": "Stop playback when sleep is detected",
+  "notificationSettings": "Notification",
+  "pushNotification": "Push Notification",
+  "pushNotificationSubtitle": "Receive new content and update notifications",
+  "storageSettings": "Storage",
+  "cachePath": "Cache Path",
+  "cacheFormat": "Cache Format",
+  "cacheFormatOffSubtitle": "Do not cache decoded audio",
+  "cacheFormatWavSubtitle": "WAV lossless (~10 MB/min, seekable)",
+  "cacheFormatMp3Subtitle": "MP3 compressed (~1.4 MB/min, recommended)",
+  "cacheFormatFlacSubtitle": "FLAC lossless (~5 MB/min)",
+  "downloadSettings": "Download Settings",
+  "downloadSettingsSubtitle": "Download rate, concurrency and cache format",
+  "maxDownloadRate": "Max Download Rate",
+  "maxDownloadRateSubtitle": "0 means unlimited",
+  "maxDownloadRateUnit": "KB/s",
+  "maxDownloadThreads": "Max Download Threads",
+  "maxDownloadThreadsSubtitle": "Concurrent download tasks",
+  "downloadPath": "Download Path",
+  "resetPath": "Reset Path",
+  "resetPathSubtitle": "Restore default storage location",
+  "storageManagement": "Storage Management",
+  "storageManagementSubtitle": "Manage downloads and cache",
+  "otherSettings": "Other",
+  "systemLog": "System Log",
+  "systemLogSubtitle": "View application run logs",
+  "aboutApp": "About App",
+  "aboutAppSubtitle": "Version and developer info",
+  "githubRepo": "GitHub Repository",
+  "githubRepoSubtitle": "View source code and report issues",
+  "language": "Language",
+  "languageSubtitle": "Switch application language",
+  "navSource": "Source",
+  "navSourceTitle": "ASMR Source",
+  "navPlayer": "Player",
+  "navPlayerTitle": "Player",
+  "navPlaylist": "Playlist",
+  "navPlaylistTitle": "Playlist",
+  "appDescription": "An application focused on ASMR audio playback, providing you with a high-quality relaxation experience.",
+  "developer": "Developer: {name}",
+  "@developer": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "email": "Contact Email: {address}",
+  "@email": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsTooltip": "Settings",
+  "noContent": "No content playing",
+  "goToSource": "Go to \"Source\" page to select content",
+  "nowPlaying": "Now Playing",
+  "favoriteTooltip": "Favorite",
+  "shareTooltip": "Share",
+  "moreTooltip": "More",
+  "immersiveAudio": "Immersive ASMR soundscapes, keep relaxed.",
+  "downloadAudio": "Download Audio",
+  "downloadAll": "Download all",
+  "downloadAllConfirm": "Download all {count} tracks?",
+  "@downloadAllConfirm": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "downloadAllStarted": "Downloading {count} tracks",
+  "@downloadAllStarted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "downloadAllAlready": "All tracks are already downloaded",
+  "downloadAllDone": "Nothing to download",
+  "clearAllCache": "Clear all downloads",
+  "clearAllCacheConfirm": "Clear all downloads of this source?",
+  "clearAllCacheContent": "This deletes {size} of downloaded files.",
+  "@clearAllCacheContent": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadUsage": "Downloads: {size}",
+  "@downloadUsage": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "clearDownloads": "Clear",
+  "playQueue": "Play Queue",
+  "clearQueue": "Clear Queue",
+  "tracksCount": "{count} tracks",
+  "@tracksCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shuffleTooltip": "Shuffle",
+  "repeatTooltip": "Repeat",
+  "muteTooltip": "Mute",
+  "unmuteTooltip": "Unmute",
+  "createPlaylistTitle": "Create New Playlist",
+  "playlistNameHint": "Enter playlist name",
+  "playlistNameLabel": "Name",
+  "cancel": "Cancel",
+  "create": "Create",
+  "playlistEmpty": "Playlist is empty",
+  "startPlaying": "Start playing: {name}",
+  "@startPlaying": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmDeleteTitle": "Confirm Delete",
+  "confirmDeleteContent": "Are you sure you want to delete playlist \"{name}\"?",
+  "@confirmDeleteContent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "delete": "Delete",
+  "deleteSource": "Delete source",
+  "deleteSourceConfirm": "Delete this source?",
+  "deleteSourceContent": "\"{name}\" will be removed from your source list.",
+  "@deleteSourceContent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "myPlaylists": "My Playlists",
+  "currentQueue": "Current Queue",
+  "customPlaylists": "Custom Playlists",
+  "newPlaylist": "New",
+  "noPlaylists": "No playlists, click top right to create",
+  "tracksCountSuffix": " tracks",
+  "playAllTooltip": "Play All",
+  "deletePlaylistTooltip": "Delete Playlist",
+  "clearQueueTooltip": "Clear Queue",
+  "queueEmpty": "Current queue is empty",
+  "searchHint": "Search ASMR content...",
+  "searchTooltip": "Search",
+  "sourceFilter": "Source",
+  "allSources": "All Sources",
+  "typeFilter": "Type",
+  "allTypes": "All Types",
+  "liveStream": "Live Stream",
+  "fileVideo": "File/Video",
+  "tagFilter": "Tags",
+  "selectTag": "Select tag to filter...",
+  "mySourcesTab": "My Sources",
+  "searchResultsTab": "Search Results",
+  "recommendationsTab": "Recommendations",
+  "addSourceFab": "Add Source",
+  "noSourcesFound": "No sources found",
+  "clearFilterHint": "Try clearing filters or adding new sources",
+  "searchContent": "Search ASMR Audio Content",
+  "searchDescription": "Support searching YouTube, Bilibili, etc.",
+  "loadingFailed": "Loading failed: {error}",
+  "@loadingFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "retry": "Retry",
+  "noRecommendations": "No recommendations",
+  "addSourceTitle": "Add ASMR Source",
+  "sourceNameLabel": "Name",
+  "sourceNameHint": "Name this source",
+  "sourceTypeLabel": "Source Type",
+  "localPathLabel": "Local Path",
+  "localPathHint": "Select file or folder",
+  "selectFile": "Select File",
+  "selectFolder": "Select Folder",
+  "urlPathLabel": "URL / Path",
+  "urlPathHint": "Enter link or file path",
+  "tagsLabel": "Tags",
+  "tagsHint": "Comma separated (e.g. ASMR, Sleep)",
+  "add": "Add",
+  "searchFailed": "Search failed: {error}",
+  "@searchFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "minutesSuffix": " Minutes",
+  "hoursSuffix": "h",
+  "sleepTimerSet": "Sleep timer set to {minutes} minutes",
+  "@sleepTimerSet": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "confirm": "Confirm",
+  "pathReset": "Path reset to default",
+  "cacheManagementTitle": "Cache Management",
+  "totalCacheSize": "Total Cache Size",
+  "clearAllCache": "Clear All Cache",
+  "confirmClearTitle": "Confirm Clear",
+  "confirmClearAllContent": "Are you sure you want to clear all cache?",
+  "confirmClearSourceContent": "Are you sure you want to clear cache for this source?",
+  "clear": "Clear",
+  "cacheCleared": "Cache cleared",
+  "spaceUsed": "Space used: {size}",
+  "@spaceUsed": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "systemLogTitle": "System Log",
+  "logsCopied": "Logs copied to clipboard",
+  "sourceAccountManagementTitle": "Source Account Management",
+  "loggedIn": "Logged in: {user}",
+  "@loggedIn": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "notLoggedIn": "Not logged in",
+  "scanQrCodeLogin": "Scan QR Code Login",
+  "cookieLogin": "Cookie Login",
+  "cookieLoginTitle": "{source} Cookie Login",
+  "@cookieLoginTitle": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "enterCookieHint": "Enter Cookie",
+  "login": "Login",
+  "startPlayingCount": "Start playing: {count} tracks",
+  "@startPlayingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addToPlaylist": "Add to Playlist",
+  "addedToQueue": "Added {count} tracks to current queue",
+  "@addedToQueue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noCustomPlaylists": "No custom playlists",
+  "addedToPlaylist": "Added {count} tracks to {name}",
+  "@addedToPlaylist": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "createdAndAddedToPlaylist": "Created and added {count} tracks to {name}",
+  "@createdAndAddedToPlaylist": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "refresh": "Refresh",
+  "recordLive": "Record live",
+  "recordFailed": "Recording failed (live may be offline)",
+  "liveNow": "Live now",
+  "liveOffline": "Offline",
+  "recordings": "Recordings",
+  "recordingInProgress": "Recording…",
+  "stopRecording": "Stop recording",
+  "playAll": "Play All",
+  "addAll": "Add All",
+  "tagManagement": "Tag Management",
+  "addTag": "Add Tag",
+  "tagNameHint": "Enter tag name",
+  "fileList": "File List ({count})",
+  "@fileList": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noAudioFilesFound": "No audio files found",
+  "bilibiliQrLogin": "Bilibili QR Login",
+  "scanWithApp": "Please scan with Bilibili App",
+  "sourceLocal": "Local Files",
+  "unknownArtist": "Unknown Artist",
+  "audioEffects": "Audio Effects",
+  "effectNoiseReduction": "Noise Reduction",
+  "effectNoiseReductionDesc": "Reduces high frequency noise like static or fans.",
+  "effectSafeSleep": "Safe Sleep",
+  "effectSafeSleepDesc": "Softens audio and prevents sudden loud noises.",
+  "effectLimiter": "Limiter",
+  "effectLimiterDesc": "Prevents audio clipping and sudden loud peaks.",
+  "paramCutoff": "Cutoff Frequency",
+  "paramCutoffDesc": "Frequencies above this value will be reduced.",
+  "paramResonance": "Resonance",
+  "paramResonanceDesc": "Resonance of the filter.",
+  "paramEnableLimiter": "Enable Limiter",
+  "paramEnableLimiterDesc": "Prevents sudden loud noises.",
+  "paramSoftness": "Softness (Cutoff)",
+  "paramSoftnessDesc": "Lower values make audio softer.",
+  "volume": "Volume",
+  "close": "Close",
+  "sourceHelp": "Help",
+  "downloadCompleted": "Download completed",
+  "cachedTooltip": "Cached - tap to remove",
+  "downloadFailed": "Download failed: {error}",
+  "downloadManagement": "Downloads",
+  "downloadManagementSubtitle": "View background download tasks",
+  "importFromAccounts": "Import from Accounts",
+  "importFromAccountsSubtitle": "Auto-add favorites, followed channels and playlists from logged-in platforms",
+  "importing": "Importing...",
+  "importResult": "Imported %count% sources",
+  "@importResult": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "importEmpty": "Nothing to import",
+  "importSelectTitle": "Import Sources",
+  "importSelectHint": "Choose a platform and type",
+  "importNotLoggedIn": "Not logged in",
+  "importSelected": "Import Selected (%count%)",
+  "@importSelected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "importNoSelection": "Check something to import first",
+  "importBilibiliFavorites": "Bilibili Favorites",
+  "importBilibiliFollowings": "Bilibili Followings",
+  "importDouyuFollows": "Douyu Follows",
+  "importAsmrOnePlaylists": "asmr.one Playlists",
+  "importDlsiteLibrary": "DLsite Purchased",
+  "downloadsTab": "Downloads",
+  "watchRoomsTab": "Live watch",
+  "watchRoomsHint": "Add live rooms: the app probes them periodically even without playback and records automatically once they go live, stopping when they go offline.",
+  "noWatchRooms": "No watched rooms yet. Add one below.",
+  "addRoom": "Add room",
+  "addRoomFailed": "Cannot recognize this live URL",
+  "confirm": "OK",
+  "roomRecording": "Recording",
+  "roomWatching": "Watching",
+  "roomPaused": "Paused",
+  "liveFor": "Live for {time}",
+  "recordingFor": "Recording {time}",
+  "playbackSettings": "Playback",
+  "audioQuality": "Audio quality",
+  "audioQualitySubtitle": "Quality for remote on-demand media (some require login)",
+  "qualityAuto": "Auto (highest)",
+  "scanWithDouyuApp": "Scan with the Douyu app",
+  "renameSource": "Rename source",
+  "renameSourceHint": "Enter a new name",
+  "accountLogin": "Account login",
+  "accountLoginTitle": "Login {source}",
+  "username": "Username",
+  "password": "Password",
+  "removeFromQueue": "Remove from queue",
+  "downloadStarted": "Download started",
+  "liveEnded": "The stream has ended",
+  "navDownloads": "Downloads",
+  "navDownloadsTitle": "Downloads",
+  "noDownloads": "No download tasks",
+  "downloadQueued": "Queued",
+  "downloading": "Downloading",
+  "downloadCompletedShort": "Done",
+  "downloadFailedShort": "Failed",
+  "downloadCanceled": "Canceled",
+  "downloadOffHint": "Download format is Off, enable it in Settings first",
+  "buffering": "Buffering…",
+  "playbackError": "Playback failed",
+  "retry": "Retry",
+  "loading": "Loading…",
+  "networkError": "Network error, please check your connection and retry",
+  "@downloadFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "toggleDesktopLayout": "Toggle Desktop Layout",
+  "launchUrlFailed": "Could not launch {url}",
+  "@launchUrlFailed": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "unknownUser": "Unknown",
+  "webLogin": "Web Login"
+}
+
+
+
+
+

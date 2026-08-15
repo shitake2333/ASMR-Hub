@@ -1,0 +1,138 @@
+# ASMR Hub
+
+ASMR Hub 是一个跨平台 Flutter 应用，聚合并播放来自多平台的 ASMR 内容。
+
+## 功能特性
+
+- **多源聚合**：本地文件、YouTube、Bilibili、DLsite、斗鱼、asmr.one、Twitch
+- **统一播放器**：基于 media_kit（libmpv）的跨平台播放引擎，支持大文件流式播放、
+  直播流（FLV/HLS）、自定义 HTTP 头（防盗链）、lavfi 音效滤镜（限幅/低通）
+- **播放列表**：跨源混合播放列表、循环/随机、断点续播（5 秒自动保存）
+- **下载管理**：并发下载 + 速率限制 + 缓存格式（MP3/WAV/FLAC），仅从源页发起
+- **直播录制**：多房间后台看门狗，开播自动录制、下播自动停止
+- **账号导入**：从已登录平台导入源（B站收藏夹/关注、asmr.one 播放列表、斗鱼关注、DLsite 已购）
+- **本地化**：简体中文 / English
+- **跨平台**：Windows / Linux / macOS / Android / iOS
+
+## 支持的源
+
+| 源 | 单曲 | 合集/播放列表 | 直播 | 登录方式 |
+| :--- | :--- | :--- | :--- | :--- |
+| **本地文件** | 单个文件 | 文件夹 | ❌ | 无 |
+| **Bilibili** | 视频 URL (BV/av) | 收藏夹/合集 | ✅ 直播间 | Cookie / 扫码 |
+| **Douyu** | 直播间 | ❌ | ✅ 直播间 | 扫码 |
+| **YouTube** | 视频 URL | 播放列表 | ✅ | API Key |
+| **DLsite** | 作品页 | 多轨作品 | ❌ | 账号 / Cookie |
+| **asmr.one** | 作品 | 播放列表 | ❌ | 账号 / Cookie |
+| **Twitch** | 主播 | ❌ | ✅ 音频直播 | 匿名 |
+
+> 直播流（FLV/HLS）通过 libmpv（media_kit）播放，原生支持 FLV、AAC、HLS 等格式。
+
+## 安装
+
+从 [Releases](https://github.com/shitake2333/ASMR-Hub/releases) 下载对应平台包
+（由 `.github/workflows/release.yml` 在打 tag 时自动构建并上传）：
+
+- **Windows**：`asmr_hub-windows-x64.zip`（解压即用）
+- **Android**：`asmr_hub-android.apk`
+- **Linux**：`asmr_hub-linux-x64.tar.gz`
+- **macOS**：`asmr_hub-macos-arm64.zip` / `asmr_hub-macos-x64.zip`
+
+## 从源码构建
+
+### 环境
+
+- Flutter 3.47+（Dart 3.10+）
+- Windows 构建：Visual Studio（MSVC）+ MinGW-w64 gcc（编译 FFmpeg 桥）
+- Linux 构建：GTK 3 开发包 + FFmpeg 开发库（libavformat-dev 等）
+- macOS 构建：Xcode + Homebrew FFmpeg
+- Android 构建：Android SDK/NDK（默认 NDK 28.2.13676358）
+
+### Windows
+
+```powershell
+# 获取 FFmpeg DLL、编译 ffmpeg_bridge.dll（MinGW）、flutter build、
+# 替换完整 libmpv（lavfi 滤镜）、打包 dist/asmr_hub-windows-x64.zip
+powershell -File tool/build_windows.ps1 -Release
+```
+
+### Linux / macOS
+
+```bash
+flutter pub get
+# 编译 FFmpeg 桥（libffmpeg_bridge.so / .dylib，依赖系统/Homebrew FFmpeg）
+bash tool/build_ffmpeg_bridge_posix.sh
+flutter build linux --release          # Linux
+# 或
+flutter build macos --release
+bash tool/bundle_macos.sh              # macOS：把 FFmpeg dylib 打进 .app 并重签名
+```
+
+### Android
+
+```bash
+flutter pub get
+# 用 NDK 交叉编译 FFmpeg 7.1 到 android/app/src/main/jniLibs/（可跳过：
+# 没有它 APK 也能构建，只是下载/录音功能不可用）
+bash tool/build_ffmpeg_android.sh
+flutter build apk --release
+```
+
+> 完整版 libmpv（含 lavfi 音效滤镜）在 Windows 由构建脚本自动替换；
+> 其他平台使用 media_kit 捆绑的 libmpv。
+
+## 开发
+
+### 本地化
+
+`lib/l10n/` 下维护 ARB 文件（`app_en.arb` / `app_zh.arb`），新增语言后运行：
+
+```bash
+flutter gen-l10n
+```
+
+### 添加新源
+
+1. 在 `lib/sources/<name>/` 创建实现（继承 `BaseAudioSource`）
+2. 在 `lib/services/audio_source_manager.dart` 的 `_registerSources` 注册
+3. 在 `_loadConfigs` 添加默认配置
+4. （可选）在 `lib/services/source_import_service.dart` 添加账号导入支持
+
+### 测试
+
+- `test/`：离线单元/组件测试（CI 运行 `flutter test` 时只跑这个目录）
+- `test_network/`：依赖真实网络/外部状态的测试（B站、斗鱼、YouTube API 等），
+  本地手动运行：`flutter test test_network`
+
+### 音频架构
+
+- **播放**：media_kit（libmpv）—— 解码、流式、直播、headers、lavfi 滤镜
+- **下载/录音转码**：FFmpeg 桥（`third_party/ffmpeg/ffmpeg_bridge.c`，纯 C FFI）
+  - Windows：`ffmpeg_bridge.dll` + avcodec-61/avformat-61/avutil-59/swresample-5，
+    由 `tool/fetch_ffmpeg_windows.ps1` 获取/编译（二进制不提交 git；
+    FFmpeg 头文件 `third_party/ffmpeg/include/` 提交在仓库里）
+  - Linux：`libffmpeg_bridge.so`，`tool/build_ffmpeg_bridge_posix.sh` 链接系统 FFmpeg，
+    构建时由 CMake 打进 bundle 的 `lib/`
+  - macOS：`libffmpeg_bridge.dylib`，同样由 posix 脚本编译，
+    `tool/bundle_macos.sh` 把 dylib 拷入 .app 的 Frameworks 并重签名
+  - Android：`tool/build_ffmpeg_android.sh` 用 NDK 编译 FFmpeg 7.1 到 jniLibs，
+    Gradle CMake 再编译 `libffmpeg_bridge.so`
+- **音效**：mpv `af` 滤镜链（lavfi：alimiter / lowpass），由 `EffectsProvider` 生成
+
+## CI / 发布
+
+GitHub Actions 工作流（仓库地址 `git@github.com:shitake2333/ASMR-Hub.git`）：
+
+- `.github/workflows/ci.yml`：push/PR 到 main 时运行 `flutter analyze` + `flutter test`
+  （离线测试集）+ 格式检查
+- `.github/workflows/release.yml`：推送 `v*` tag 时构建 Windows/Linux/macOS(arm64+x64)/
+  Android 包，并自动上传到 GitHub Releases：
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+## 许可证
+
+MIT License — 见 [LICENSE](LICENSE)。

@@ -1,0 +1,204 @@
+name: Release
+
+# Builds release bundles for Windows / Linux / macOS / Android and attaches
+# them to a GitHub Release. Triggered by pushing a tag like `v1.0.0`:
+#
+#   git tag v1.0.0 && git push origin v1.0.0
+#
+# Each platform job builds the FFmpeg bridge for its target (and on Windows
+# swaps in the full lavfi-capable libmpv), then uploads its bundle as an
+# artifact; the `release` job collects everything into the GitHub Release.
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    name: Windows x64
+    runs-on: windows-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.0
+          cache: true
+
+      # MinGW-w64 gcc is needed to compile ffmpeg_bridge.dll.
+      - name: Install MinGW
+        run: choco install mingw -y --no-progress
+
+      # Fetches FFmpeg DLLs, compiles the bridge, builds with Flutter, swaps
+      # in the full libmpv and zips dist/asmr_hub-windows-x64.zip.
+      - name: Build Windows bundle
+        shell: pwsh
+        run: ./tool/build_windows.ps1 -Release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: asmr_hub-windows-x64
+          path: dist/asmr_hub-windows-x64.zip
+          retention-days: 14
+
+  linux:
+    name: Linux x64
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.0
+          cache: true
+
+      - name: Enable Linux desktop
+        run: flutter config --enable-linux-desktop
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev \
+            libstdc++-13-dev \
+            libavformat-dev libavcodec-dev libavutil-dev libswresample-dev
+
+      # Compiles libffmpeg_bridge.so against the system FFmpeg; the CMake
+      # install step bundles it into the app's lib/ directory.
+      - name: Build FFmpeg bridge
+        run: bash tool/build_ffmpeg_bridge_posix.sh
+
+      - name: Build Linux bundle
+        run: flutter build linux --release
+
+      - name: Package
+        run: |
+          mkdir -p dist
+          tar -C build/linux/x64/release/bundle -czf dist/asmr_hub-linux-x64.tar.gz .
+          ls -lh dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: asmr_hub-linux-x64
+          path: dist/asmr_hub-linux-x64.tar.gz
+          retention-days: 14
+
+  macos:
+    name: macOS ${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-15
+            arch: arm64
+          - os: macos-13
+            arch: x64
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.0
+          cache: true
+
+      - name: Enable macOS desktop
+        run: flutter config --enable-macos-desktop
+
+      - name: Install FFmpeg (Homebrew)
+        run: brew install ffmpeg
+
+      # Compiles libffmpeg_bridge.dylib against Homebrew FFmpeg.
+      - name: Build FFmpeg bridge
+        run: bash tool/build_ffmpeg_bridge_posix.sh
+
+      - name: Build macOS app
+        run: flutter build macos --release
+
+      # Copies the bridge + FFmpeg dylibs into the .app, rewrites install
+      # names and ad-hoc re-signs.
+      - name: Bundle FFmpeg dylibs
+        run: bash tool/bundle_macos.sh
+
+      - name: Package
+        run: |
+          mkdir -p dist
+          ditto -c -k --keepParent \
+            "build/macos/Build/Products/Release/ASMR Hub.app" \
+            "dist/asmr_hub-macos-${{ matrix.arch }}.zip"
+          ls -lh dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: asmr_hub-macos-${{ matrix.arch }}
+          path: dist/asmr_hub-macos-${{ matrix.arch }}.zip
+          retention-days: 14
+
+  android:
+    name: Android APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.0
+          cache: true
+
+      - uses: android-actions/setup-android@v3
+
+      # flutter.ndkVersion for Flutter 3.47 (see gradle_utils.dart).
+      - name: Install NDK
+        run: sdkmanager "ndk;28.2.13676358"
+
+      # Builds FFmpeg 7.1 .so files for arm64-v8a / armeabi-v7a / x86_64 so
+      # the Gradle CMake step can compile libffmpeg_bridge.so (download and
+      # live recording work on Android).
+      - name: Build Android FFmpeg
+        run: bash tool/build_ffmpeg_android.sh
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: asmr_hub-android
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 14
+
+  release:
+    name: Publish GitHub Release
+    needs: [windows, linux, macos, android]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: List artifacts
+        run: find artifacts -type f | sort
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          generate_release_notes: true
+          fail_on_unmatched_files: true

@@ -1,0 +1,23 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Headband -->
+  <path d="M128 280 V240 C128 169.2 185.2 112 256 112 C326.8 112 384 169.2 384 240 V280" stroke="#1A237E" stroke-width="32" stroke-linecap="round"/>
+  <path d="M128 280 V240 C128 169.2 185.2 112 256 112 C326.8 112 384 169.2 384 240 V280" stroke="#29B6F6" stroke-width="20" stroke-linecap="round"/>
+
+  <!-- Earcups -->
+  <g stroke="#1A237E" stroke-width="16" fill="#29B6F6">
+    <rect x="80" y="280" width="96" height="128" rx="32"/>
+    <rect x="336" y="280" width="96" height="128" rx="32"/>
+  </g>
+
+  <!-- Earpads -->
+  <path d="M100 300 H120 V408 H100 A20 20 0 0 1 80 388 V320 A20 20 0 0 1 100 300 Z" fill="#F8BBD0" stroke="none"/>
+  <path d="M412 300 H392 V408 H412 A20 20 0 0 0 432 388 V320 A20 20 0 0 0 412 300 Z" fill="#F8BBD0" stroke="none"/>
+
+  <!-- Wifi -->
+  <path d="M200 200 A80 80 0 0 1 312 200" stroke="#4FC3F7" stroke-width="24" stroke-linecap="round"/>
+  <path d="M224 232 A48 48 0 0 1 288 232" stroke="#4FC3F7" stroke-width="24" stroke-linecap="round"/>
+  <path d="M244 264 A16 16 0 0 1 268 264" stroke="#4FC3F7" stroke-width="24" stroke-linecap="round"/>
+
+  <!-- Heart -->
+  <path d="M256 430 C256 430 190 360 190 320 A35 35 0 0 1 256 290 A35 35 0 0 1 322 320 C322 360 256 430 256 430 Z" fill="#F06292" stroke="#1A237E" stroke-width="12" stroke-linejoin="round"/>
+</svg>

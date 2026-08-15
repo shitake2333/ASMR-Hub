@@ -1,0 +1,75 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+*.bak
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+.kotlin/
+
+# VS Code
+.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+dist/
+*.symbols
+*.map.json
+
+# Android Studio build artifacts
+/android/app/debug
+/android/app/profile
+/android/app/release
+/android/local.properties
+/android/.gradle/
+android/.kotlin/
+
+# Flutter ephemeral (generated per-machine)
+**/ephemeral/
+
+# macOS / Xcode
+DerivedData/
+*.xcuserstate
+xcuserdata/
+
+# Native binaries fetched at build time — keep only sources.
+# The bridge C source, README and the FFmpeg 7.1 headers (third_party/ffmpeg/
+# include/) are tracked: the headers are needed to compile the bridge on every
+# platform (Windows/Android CMake, Linux/macOS pkg-config) and are small
+# (~1 MB). DLLs / .so / .dylib binaries are downloaded or compiled by the
+# build scripts (tool/*) and never committed.
+third_party/ffmpeg/*.dll
+third_party/ffmpeg/*.dll.a
+third_party/ffmpeg/*.lib
+third_party/ffmpeg/*.a
+third_party/ffmpeg/*.so
+third_party/ffmpeg/*.dylib
+third_party/ffmpeg/ffmpeg_bridge.dll.bak
+
+# Prebuilt FFmpeg for Android (built by tool/build_ffmpeg_android.sh).
+android/app/src/main/jniLibs/
+
+# Local scratch
+0
+*.log.*
+.review/
