@@ -32,6 +32,12 @@ set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_RELEASE}")
 # Use Unicode for all projects.
 add_definitions(-DUNICODE -D_UNICODE)
 
+# Newer MSVC toolchains (VS 17.14+ / VS 18) turn the use of the deprecated
+# <experimental/coroutine> + /await into a hard error (STL1011). Some plugins
+# (permission_handler_windows) still use it, so silence the deprecation for
+# every target defined below (incl. the generated plugin targets).
+add_compile_definitions(_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS)
+
 # Compilation settings that should be applied to most targets.
 #
 # Be cautious about adding new options here, as plugins use this function by

@@ -70,7 +70,7 @@ jobs:
             clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev \
             libstdc++-13-dev \
             libavformat-dev libavcodec-dev libavutil-dev libswresample-dev \
-            libmpv-dev
+            libmpv-dev libayatana-appindicator3-dev
 
       # Bridge + flutter build + bundle system libmpv + tar.gz.
       - name: Build Linux bundle
@@ -123,6 +123,10 @@ jobs:
     name: Android APK
     runs-on: ubuntu-latest
     timeout-minutes: 150
+    env:
+      # The Gradle wrapper downloads the distribution itself; prefer IPv4 to
+      # avoid "Connection refused" hiccups on the CI runner.
+      GRADLE_OPTS: -Djava.net.preferIPv4Stack=true
     steps:
       - uses: actions/checkout@v4
 

@@ -105,7 +105,8 @@ automatically by `.github/workflows/release.yml` on tags):
 
 - Flutter 3.47+ (Dart 3.10+)
 - Windows build: Visual Studio (MSVC) + MinGW-w64 gcc (to compile the FFmpeg bridge)
-- Linux build: GTK 3 dev packages + FFmpeg dev libraries (libavformat-dev, …)
+- Linux build: GTK 3 dev packages + FFmpeg dev libraries (libavformat-dev, …) +
+  libmpv-dev + libayatana-appindicator3-dev
 - macOS build: Xcode + Homebrew FFmpeg
 - Android build: Android SDK/NDK (default NDK 28.2.13676358)
 

@@ -99,7 +99,8 @@ ASMR Hub 是一个跨平台 Flutter 应用，聚合并播放来自多平台的 A
 
 - Flutter 3.47+（Dart 3.10+）
 - Windows 构建：Visual Studio（MSVC）+ MinGW-w64 gcc（编译 FFmpeg 桥）
-- Linux 构建：GTK 3 开发包 + FFmpeg 开发库（libavformat-dev 等）
+- Linux 构建：GTK 3 开发包 + FFmpeg 开发库（libavformat-dev 等）+
+  libmpv-dev + libayatana-appindicator3-dev
 - macOS 构建：Xcode + Homebrew FFmpeg
 - Android 构建：Android SDK/NDK（默认 NDK 28.2.13676358）
 
