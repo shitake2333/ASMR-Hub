@@ -16,7 +16,9 @@
 cmake_minimum_required(VERSION 3.10)
 project(ffmpeg_bridge C)
 
-set(BRIDGE_SRC "${CMAKE_CURRENT_SOURCE_DIR}/../../../third_party/ffmpeg/ffmpeg_bridge.c")
+# Repo-root relative paths: this file lives at android/app/src/main/cpp/, so
+# the repo root is five levels up (cpp -> main -> src -> app -> android -> root).
+set(BRIDGE_SRC "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../third_party/ffmpeg/ffmpeg_bridge.c")
 set(JNI_LIBS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/${ANDROID_ABI}")
 
 set(FFMPEG_LIBS
@@ -45,7 +47,7 @@ if(NOT EXISTS "${BRIDGE_SRC}")
 endif()
 
 # Headers of the FFmpeg dev tree (include/libavformat etc.).
-set(FFMPEG_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/../../../third_party/ffmpeg/include")
+set(FFMPEG_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../third_party/ffmpeg/include")
 
 add_library(ffmpeg_bridge SHARED ${BRIDGE_SRC})
 
