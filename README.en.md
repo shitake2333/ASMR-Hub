@@ -8,23 +8,12 @@ from multiple platforms, with download and live-recording support.
 ## Features
 
 - **Multi-source aggregation**: local files, YouTube, Bilibili, DLsite, Douyu, asmr.one, Twitch
-- **Unified player**: cross-platform playback engine based on media_kit (libmpv)
-  - Streaming for large files, native decoding of live streams (FLV/HLS)
-  - Custom HTTP headers (anti-hotlink: Bilibili Referer, Douyu cookies, …)
-  - lavfi audio effects (limiter `alimiter` / low-pass `lowpass`)
-  - Resume playback (position auto-saved every 5 s, restored on restart)
-- **Playlists**: mixed across sources, loop/shuffle, audio-quality switching
-- **Download manager**: concurrent downloads + rate limiting + cache format
-  (MP3/WAV/FLAC), initiated only from source pages
-- **Live recording**: background watchdog for multiple rooms
-  (`live_watch_manager`), auto-record on stream start, auto-stop with a
-  channel-named notice when the stream ends
-- **Sleep timer**: quick presets / custom minutes / stop at end of track
-- **Account import**: two-step import wizard (pick platform & type first, then
-  check items) to bulk-import sources from logged-in platforms
-  (see [Account Import](#account-import))
-- **Theme & localization**: light / dark / system; Simplified Chinese / English
-- **Cross-platform**: Windows / Linux / macOS / Android (iOS code-compatible but not released)
+- **Player**: media_kit (libmpv) with live streams (FLV/HLS), anti-hotlink request headers, lavfi effects, resume playback
+- **Playlists**: mixed across sources, loop/shuffle, quality switching
+- **Download & live recording**: concurrent downloads, rate limiting, cache formats (MP3/WAV/FLAC); multi-room watchdog auto-recording
+- **Account import**: two-step wizard to bulk-import from logged-in platforms (see [Account Import](#account-import))
+- **Sleep timer**, theme (light/dark/system), zh/en UI
+- **Cross-platform**: Windows / Linux / macOS / Android
 
 ## Supported Sources
 
