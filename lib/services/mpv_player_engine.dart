@@ -28,6 +28,7 @@ class MpvPlayerEngine {
   bool _buffering = false;
   bool _completed = false;
   bool _paused = false;
+  bool _hasMedia = false;
   String? _error;
 
   /// Callbacks wired by the provider.
@@ -43,6 +44,10 @@ class MpvPlayerEngine {
   bool get isPaused => _paused;
   bool get isCompleted => _completed;
   String? get error => _error;
+
+  /// True when a media item is actually loaded in the native player (as
+  /// opposed to a freshly created engine that has never opened anything).
+  bool get hasMedia => _hasMedia;
 
   /// True when the native libmpv player is operational.
   bool get isAvailable => _available;
@@ -113,6 +118,7 @@ class MpvPlayerEngine {
     _position = Duration.zero;
     _duration = Duration.zero;
     await _player!.open(Media(url, httpHeaders: headers ?? {}), play: start);
+    _hasMedia = true;
     onPositionChanged?.call();
     onDurationChanged?.call();
     onPlaybackStateChanged?.call();
@@ -138,6 +144,7 @@ class MpvPlayerEngine {
     _position = Duration.zero;
     _duration = Duration.zero;
     _completed = false;
+    _hasMedia = false;
     await _player!.stop();
     onPositionChanged?.call();
     onDurationChanged?.call();
@@ -198,6 +205,7 @@ class MpvPlayerEngine {
     final player = _player;
     _player = null;
     _available = false;
+    _hasMedia = false;
     if (player != null) {
       await player.dispose();
     }

@@ -460,7 +460,9 @@ class _SourceDetailPageState extends State<SourceDetailPage> {
           ),
         ),
       );
-      // Jump to the player tab so the user sees playback start.
+      // Return to the shell so the tab switch is visible, then jump to the
+      // player tab so the user sees playback start.
+      Navigator.of(context).popUntil((route) => route.isFirst);
       AppNavigator.goToTab(1);
     }
   }
@@ -700,7 +702,12 @@ class _SourceDetailPageState extends State<SourceDetailPage> {
     final playerProvider = context.read<AudioPlayerProvider>();
     playerProvider.addToPlaylist(track);
     await playerProvider.play(track);
-    // Jump to the player tab so the user sees playback start.
+    if (!mounted) return;
+    // Pop back to the shell (main page) first — the tab bar lives there and
+    // the detail page is a pushed route on top of it. Without this the tab
+    // switches underneath while the detail page stays on screen.
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    // Then jump to the player tab so the user sees playback start.
     AppNavigator.goToTab(1);
   }
 

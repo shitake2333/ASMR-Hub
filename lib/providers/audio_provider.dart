@@ -36,7 +36,6 @@ class AudioPlayerProvider extends ChangeNotifier {
   Duration _duration = Duration.zero;
   double _volume = 1.0;
   bool _isMuted = false;
-  double _previousVolume = 1.0;
   bool _hasUserInteracted = false;
   bool _isInitializing = false;
   Timer? _positionTicker;
@@ -280,7 +279,11 @@ class AudioPlayerProvider extends ChangeNotifier {
         _setPlaybackState(PlaybackState.playing);
         return;
       }
-      if (_currentTrack != null) {
+      // Resume a paused track — but only when the engine actually has media.
+      // Right after startup nothing is loaded yet, so fall through and open
+      // the track (otherwise play() would "succeed" with no audio and the
+      // volume would never be applied).
+      if (_currentTrack != null && _engine.hasMedia) {
         await _engine.play();
         _setPlaybackState(PlaybackState.playing);
         return;
@@ -370,24 +373,32 @@ class AudioPlayerProvider extends ChangeNotifier {
     _volume = volume.clamp(0.0, 1.0);
     if (_volume > 0) {
       _isMuted = false;
-      _previousVolume = _volume;
     }
     _engine.setVolume(_volume);
     notifyListeners();
+    // Persist immediately so a volume change survives an abrupt exit
+    // (window close does not reliably fire the detached lifecycle event).
+    unawaited(_saveVolume());
   }
 
-  /// Toggle mute
+  /// Toggle mute. Muting only silences the engine — [volume] itself is kept
+  /// so the persisted value stays the user's real volume (restart must not
+  /// come back with 0% volume because the app was muted on exit).
   void toggleMute() {
     _isMuted = !_isMuted;
-    if (_isMuted) {
-      _previousVolume = _volume;
-      _volume = 0;
-    } else {
-      _volume = _previousVolume;
-      if (_volume == 0) _volume = 0.5;
-    }
-    _engine.setVolume(_volume);
+    _engine.setVolume(_isMuted ? 0 : _volume);
     notifyListeners();
+    unawaited(_saveVolume());
+  }
+
+  /// Persists the volume (0-1 model) without touching the rest of the state.
+  Future<void> _saveVolume() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setDouble(_prefsKeyVolume, _volume);
+    } catch (e) {
+      LogService().error('Failed to save volume', e);
+    }
   }
 
   /// Play next
@@ -573,20 +584,26 @@ class AudioPlayerProvider extends ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
 
-      if (_currentPlaylist.isNotEmpty) {
-        final playlistJson = jsonEncode(
-          _currentPlaylist.map((t) => t.toJson()).toList(),
-        );
-        await prefs.setString(_prefsKeyPlaylist, playlistJson);
-      } else {
-        await prefs.remove(_prefsKeyPlaylist);
-      }
-
+      // Critical scalars first: a playlist encode failure below must not
+      // prevent volume/position from being persisted.
       await prefs.setInt(_prefsKeyIndex, _currentIndex);
       await prefs.setInt(_prefsKeyPosition, _position.inMilliseconds);
       await prefs.setDouble(_prefsKeyVolume, _volume);
       await prefs.setBool(_prefsKeyShuffle, _isShuffleEnabled);
       await prefs.setInt(_prefsKeyLoopMode, _loopMode.index);
+
+      try {
+        if (_currentPlaylist.isNotEmpty) {
+          final playlistJson = jsonEncode(
+            _currentPlaylist.map((t) => t.toJson()).toList(),
+          );
+          await prefs.setString(_prefsKeyPlaylist, playlistJson);
+        } else {
+          await prefs.remove(_prefsKeyPlaylist);
+        }
+      } catch (e) {
+        LogService().error('Failed to save playlist', e);
+      }
     } catch (e, stack) {
       LogService().error('Failed to save playback state', e, stack);
     }
