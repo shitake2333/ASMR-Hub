@@ -130,7 +130,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
@@ -146,6 +146,50 @@ jobs:
       # flutter.ndkVersion for Flutter 3.47 (see gradle_utils.dart).
       - name: Install NDK
         run: sdkmanager "ndk;28.2.13676358"
+
+      # The Gradle wrapper downloads its distribution itself and has failed
+      # with "Connection refused" to services.gradle.org from this runner.
+      # Pre-seed the wrapper cache with curl (multi-mirror fallback) so
+      # gradlew finds a complete, verified distribution and never downloads.
+      - name: Pre-seed Gradle distribution
+        run: |
+          set -euo pipefail
+          DIST_NAME="gradle-8.14-all"
+          URLS=(
+            "https://services.gradle.org/distributions/gradle-8.14-all.zip"
+            "https://mirrors.cloud.tencent.com/gradle/gradle-8.14-all.zip"
+            "https://mirrors.huaweicloud.com/gradle/gradle-8.14-all.zip"
+          )
+          GRADLE_USER_HOME="${GRADLE_USER_HOME:-$HOME/.gradle}"
+          # Wrapper cache subdir: <dist-name>/<base36(md5(url))> (see Gradle's
+          # PathAssembler). The md5 must match the OFFICIAL url exactly.
+          HASH36="$(python3 -c "import hashlib
+          def to36(n):
+              d='0123456789abcdefghijklmnopqrstuvwxyz'
+              s=''
+              while n:
+                  n,r=divmod(n,36); s=d[r]+s
+              return s
+          print(to36(int.from_bytes(hashlib.md5(b'${URLS[0]}').digest(),'big')))")"
+          DIST_DIR="$GRADLE_USER_HOME/wrapper/dists/$DIST_NAME/$HASH36"
+          ZIP="$DIST_DIR/$DIST_NAME.zip"
+          mkdir -p "$DIST_DIR"
+          if [ ! -f "$ZIP" ]; then
+            for url in "${URLS[@]}"; do
+              echo "Downloading Gradle distribution via curl: $url"
+              if curl -fL --connect-timeout 30 --retry 3 --retry-all-errors \
+                  -o "$ZIP.part" "$url"; then
+                mv "$ZIP.part" "$ZIP"
+                break
+              fi
+              rm -f "$ZIP.part"
+            done
+            [ -f "$ZIP" ] || { echo "ERROR: could not download Gradle distribution from any mirror" >&2; exit 1; }
+          fi
+          unzip -q -o "$ZIP" -d "$DIST_DIR"
+          # Marker consumed by org.gradle.wrapper.Install.
+          touch "$DIST_DIR/$DIST_NAME.zip.ok"
+          echo "Gradle distribution pre-seeded at $DIST_DIR"
 
       # FFmpeg (jniLibs) + flutter build apk + copy into dist/.
       - name: Build APK

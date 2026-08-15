@@ -279,11 +279,28 @@ static void enc_init(Bridge *b, int codec, int bitrate) {
         b->enc->bit_rate = bitrate;
     }
     av_channel_layout_default(&b->enc->ch_layout, 2);
-    if (codec != 2 && enc_codec->sample_fmts) {
-        b->enc->sample_fmt = enc_codec->sample_fmts[0];
-    } else if (codec != 2) {
+#if LIBAVCODEC_VERSION_MAJOR >= 61
+    // FFmpeg 7.x: codec->sample_fmts is deprecated; use the supported-config API.
+    if (codec != 2) {
+      const void *config = NULL;
+      int nb_configs = 0;
+      if (avcodec_get_supported_config(
+              NULL, enc_codec, AV_CODEC_CONFIG_SAMPLE_FORMAT,
+              0, &config, &nb_configs) == 0 &&
+          nb_configs > 0 && config != NULL) {
+        b->enc->sample_fmt = *(const enum AVSampleFormat *)config;
+      } else {
         b->enc->sample_fmt = AV_SAMPLE_FMT_FLTP;
+      }
     }
+#else
+    // FFmpeg < 7.0 (e.g. Debian/Ubuntu system FFmpeg): legacy field.
+    if (codec != 2 && enc_codec->sample_fmts) {
+      b->enc->sample_fmt = enc_codec->sample_fmts[0];
+    } else if (codec != 2) {
+      b->enc->sample_fmt = AV_SAMPLE_FMT_FLTP;
+    }
+#endif
     b->enc->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
     if (avcodec_open2(b->enc, enc_codec, NULL) < 0) {
         avcodec_free_context(&b->enc);
