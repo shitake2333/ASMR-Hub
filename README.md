@@ -1,32 +1,93 @@
 # ASMR Hub
 
-ASMR Hub 是一个跨平台 Flutter 应用，聚合并播放来自多平台的 ASMR 内容。
+ASMR Hub 是一个跨平台 Flutter 应用，聚合并播放来自多平台的 ASMR 内容，
+支持下载与直播录制。
 
 ## 功能特性
 
 - **多源聚合**：本地文件、YouTube、Bilibili、DLsite、斗鱼、asmr.one、Twitch
-- **统一播放器**：基于 media_kit（libmpv）的跨平台播放引擎，支持大文件流式播放、
-  直播流（FLV/HLS）、自定义 HTTP 头（防盗链）、lavfi 音效滤镜（限幅/低通）
-- **播放列表**：跨源混合播放列表、循环/随机、断点续播（5 秒自动保存）
+- **统一播放器**：基于 media_kit（libmpv）的跨平台播放引擎
+  - 大文件流式播放、直播流（FLV/HLS）原生解码
+  - 自定义 HTTP 头（防盗链，如 Bilibili Referer、斗鱼 Cookie）
+  - lavfi 音效滤镜（限幅器 alimiter / 低通 lowpass）
+  - 断点续播（进度 5 秒自动保存，重启后恢复）
+- **播放列表**：跨源混合、循环/随机、音频质量切换
 - **下载管理**：并发下载 + 速率限制 + 缓存格式（MP3/WAV/FLAC），仅从源页发起
-- **直播录制**：多房间后台看门狗，开播自动录制、下播自动停止
-- **账号导入**：从已登录平台导入源（B站收藏夹/关注、asmr.one 播放列表、斗鱼关注、DLsite 已购）
-- **本地化**：简体中文 / English
-- **跨平台**：Windows / Linux / macOS / Android / iOS
+- **直播录制**：多房间后台看门狗（`live_watch_manager`），开播自动录制、
+  下播自动停止并提示（提示带主播名）
+- **睡眠定时器**：快捷预设 / 自定义分钟数 / 当前曲目结束后停止
+- **账号导入**：两步导入向导（先选平台与类型，再勾选条目），从已登录平台
+  批量导入源（见 [账号导入](#账号导入)）
+- **主题与本地化**：浅色/深色/跟随系统；简体中文 / English
+- **跨平台**：Windows / Linux / macOS / Android（iOS 代码兼容但未发布）
 
 ## 支持的源
 
-| 源 | 单曲 | 合集/播放列表 | 直播 | 登录方式 |
+| 源 | 内容类型 | 直播 | 录制/监控 | 登录方式 |
 | :--- | :--- | :--- | :--- | :--- |
-| **本地文件** | 单个文件 | 文件夹 | ❌ | 无 |
-| **Bilibili** | 视频 URL (BV/av) | 收藏夹/合集 | ✅ 直播间 | Cookie / 扫码 |
-| **Douyu** | 直播间 | ❌ | ✅ 直播间 | 扫码 |
-| **YouTube** | 视频 URL | 播放列表 | ✅ | API Key |
-| **DLsite** | 作品页 | 多轨作品 | ❌ | 账号 / Cookie |
-| **asmr.one** | 作品 | 播放列表 | ❌ | 账号 / Cookie |
-| **Twitch** | 主播 | ❌ | ✅ 音频直播 | 匿名 |
+| **本地文件** | 音频文件 / 文件夹 | ❌ | ❌ | 无需登录 |
+| **Bilibili** | 单视频 / 合集·剧集 / 收藏夹 | ✅ 直播间 | ✅ | 扫码 / 浏览器 / Cookie |
+| **Douyu** | 直播间 | ✅ | ✅ | 扫码 / Cookie |
+| **YouTube** | 视频 / 播放列表（仅音频） | ❌ | ❌ | 浏览器 / Cookie（可选） |
+| **DLsite** | 作品页 RJ{id}（多音轨） | ❌ | ❌ | 账号密码 / Cookie |
+| **asmr.one** | 作品页 / 播放列表 | ❌ | ❌ | 账号密码 / Cookie |
+| **Twitch** | 主播频道（audio-only） | ✅ | ✅ | 匿名（可选 Cookie） |
 
-> 直播流（FLV/HLS）通过 libmpv（media_kit）播放，原生支持 FLV、AAC、HLS 等格式。
+### 各源详细说明
+
+**本地文件** — 直接添加本机音频文件或文件夹（mp3/wav/flac/m4a/ogg 等），
+无需网络和登录；直播录制产生的文件也可直接添加。
+
+**Bilibili（哔哩哔哩）** — 支持的链接：
+- 单个视频：`https://www.bilibili.com/video/BVxxxxxxxxxx`
+- 合集 / 剧集（多P）：`https://www.bilibili.com/bangumi/...` 或合集页
+- 收藏夹：`https://space.bilibili.com/{uid}/favlist?fid={fid}`
+- 直播房间：`https://live.bilibili.com/{roomId}`（可收听、可录制、可后台监控）
+- `b23.tv` 短链自动解析
+
+> 高清音频需要登录（推荐扫码登录）；Bilibili CDN 有防盗链，下载会自动携带
+> 浏览器 UA + Referer。
+
+**Douyu（斗鱼）** — 直播房间：`https://www.douyu.com/{roomId}`（如 `/92020`）。
+开播时可收听、录制、后台监控；扫码登录后可获得完整房间列表与高清画质。
+部分直播间存在地域/鉴权限制，无法播放时会提示；主播下播后房间卡片会显示
+「直播已下播」。
+
+**YouTube** — 单个视频：`https://www.youtube.com/watch?v={id}`、
+短链 `https://youtu.be/{id}`；播放列表 `https://www.youtube.com/playlist?list={id}`
+会以多曲目方式加入。仅提取音频（不播放画面）；浏览器/Cookie 登录可访问会员
+或受限内容。
+
+**DLsite** — 作品页：`https://www.dlsite.com/maniax/work/=/product_id/RJ{id}.html`，
+作品以多音轨播放列表加入。需要登录（推荐「浏览器登录」）才能播放已购买的作品；
+未购买的作品无法播放。
+
+**asmr.one** — 作品页：`https://asmr.one/work/{id}`（多音轨）、
+播放列表：`https://asmr.one/playlist?id={uuid}`。播放列表需要登录
+（用户名/密码，免费注册无需邮箱）。
+
+**Twitch** — 频道页：`https://www.twitch.tv/{channel}`，匿名即可收听公开频道的
+音频流（audio-only），可录制、可后台监控；主播下播后显示「直播已下播」。
+
+> 直播流（FLV/HLS）通过 libmpv（media_kit）播放，原生支持 FLV、AAC、HLS 等格式；
+> 「录制/监控」指将直播转码存为本地文件并支持后台多房间看门狗。
+
+## 账号导入
+
+源页 →「从账号导入」打开两步导入向导：
+
+1. **第一步：选择平台与类型**（未登录的平台显示锁定标记）
+2. **第二步：勾选条目并批量导入**（可多选）
+
+支持的导入分组：
+
+| 分组 | 内容 | 登录要求 |
+| :--- | :--- | :--- |
+| Bilibili 收藏夹 | 收藏夹列表（按收藏夹导入视频合集） | B站登录 |
+| Bilibili 关注主播 | 关注的直播间（`live.bilibili.com/{mid}`） | B站登录 |
+| asmr.one 播放列表 | 我喜欢的音声 / 我标记的音声 | asmr.one 登录 |
+| 斗鱼关注 | 关注的直播间 | 斗鱼登录 |
+| DLsite 已购 | 已购买的作品 | DLsite 登录 |
 
 ## 安装
 
@@ -81,11 +142,41 @@ flutter build apk --release
 > 完整版 libmpv（含 lavfi 音效滤镜）在 Windows 由构建脚本自动替换；
 > 其他平台使用 media_kit 捆绑的 libmpv。
 
+## 项目结构
+
+```
+lib/
+├── main.dart                 # 入口：MediaKit 初始化、Provider 装配、主 Tab 壳
+├── pages/                    # UI 页面（源列表/详情、播放器、播放列表、下载、
+│                             #   设置、导入向导、Web 登录…）
+├── providers/                # 状态管理（AudioPlayerProvider、PlaylistProvider、
+│                             #   ThemeProvider、EffectsProvider、AuthProvider…）
+├── services/                 # 业务服务
+│   ├── mpv_player_engine.dart    # media_kit 播放引擎封装（懒加载 Player）
+│   ├── audio_provider.dart       # 播放状态机：路由、循环/随机、睡眠定时、持久化
+│   ├── download_manager.dart     # 并发下载 + 限速 + 缓存格式（经 FFmpeg 桥转码）
+│   ├── live_recorder.dart        # 直播录制（FFmpeg 桥）
+│   ├── live_watch_manager.dart   # 多房间后台看门狗
+│   ├── source_import_service.dart# 账号导入（收藏夹/关注/播放列表/已购）
+│   └── ffmpeg/                   # FFmpeg FFI 桥的 Dart 封装（解码/编码）
+├── sources/                  # 各平台源实现
+│   ├── base/                     # BaseAudioSource / SourceAuth / SourceScraper
+│   ├── bilibili/ douyu/ youtube/ dlsite/ asmrone/ twitch/ local/
+├── models/                   # 数据模型（AudioTrack、ASMRSource、账号数据…）
+├── effects/                  # 音效滤镜链生成（lavfi）
+└── l10n/                     # ARB 本地化 + 生成的 app_localizations
+
+third_party/ffmpeg/           # FFmpeg 桥 C 源码 + 提交的头文件（二进制构建期获取）
+tool/                         # 各平台构建脚本（见「从源码构建」）
+.github/workflows/            # CI + 发布工作流
+test/  test_network/          # 离线测试 / 联网测试
+```
+
 ## 开发
 
 ### 本地化
 
-`lib/l10n/` 下维护 ARB 文件（`app_en.arb` / `app_zh.arb`），新增语言后运行：
+`lib/l10n/` 下维护 ARB 文件（`app_en.arb` / `app_zh.arb`），修改后运行：
 
 ```bash
 flutter gen-l10n
@@ -93,7 +184,8 @@ flutter gen-l10n
 
 ### 添加新源
 
-1. 在 `lib/sources/<name>/` 创建实现（继承 `BaseAudioSource`）
+1. 在 `lib/sources/<name>/` 创建实现（继承 `BaseAudioSource`，
+   提供 `SourceAuth` 与 `SourceScraper`）
 2. 在 `lib/services/audio_source_manager.dart` 的 `_registerSources` 注册
 3. 在 `_loadConfigs` 添加默认配置
 4. （可选）在 `lib/services/source_import_service.dart` 添加账号导入支持
@@ -118,6 +210,8 @@ flutter gen-l10n
   - Android：`tool/build_ffmpeg_android.sh` 用 NDK 编译 FFmpeg 7.1 到 jniLibs，
     Gradle CMake 再编译 `libffmpeg_bridge.so`
 - **音效**：mpv `af` 滤镜链（lavfi：alimiter / lowpass），由 `EffectsProvider` 生成
+- **音量模型**：全链路 0-1（持久化 0-1），仅在引擎边界换算为 mpv 的 0-100；
+  音量在每次调整时立即持久化
 
 ## CI / 发布
 
