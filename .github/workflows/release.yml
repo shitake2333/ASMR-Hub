@@ -154,11 +154,11 @@ jobs:
       - name: Pre-seed Gradle distribution
         run: |
           set -euo pipefail
-          DIST_NAME="gradle-8.14-all"
+          DIST_NAME="gradle-8.14.3-all"
           URLS=(
-            "https://services.gradle.org/distributions/gradle-8.14-all.zip"
-            "https://mirrors.cloud.tencent.com/gradle/gradle-8.14-all.zip"
-            "https://mirrors.huaweicloud.com/gradle/gradle-8.14-all.zip"
+            "https://services.gradle.org/distributions/gradle-8.14.3-all.zip"
+            "https://mirrors.cloud.tencent.com/gradle/gradle-8.14.3-all.zip"
+            "https://mirrors.huaweicloud.com/gradle/gradle-8.14.3-all.zip"
           )
           GRADLE_USER_HOME="${GRADLE_USER_HOME:-$HOME/.gradle}"
           # Wrapper cache subdir: <dist-name>/<base36(md5(url))> (see Gradle's
