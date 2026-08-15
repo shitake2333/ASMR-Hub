@@ -107,34 +107,37 @@ ASMR Hub 是一个跨平台 Flutter 应用，聚合并播放来自多平台的 A
 
 ```powershell
 # 获取 FFmpeg DLL、编译 ffmpeg_bridge.dll（MinGW）、flutter build、
-# 替换完整 libmpv（lavfi 滤镜）、打包 dist/asmr_hub-windows-x64.zip
+# 打包 dist/asmr_hub-windows-x64.zip
 powershell -File tool/build_windows.ps1 -Release
 ```
 
-### Linux / macOS
+### Linux
 
 ```bash
-flutter pub get
-# 编译 FFmpeg 桥（libffmpeg_bridge.so / .dylib，依赖系统/Homebrew FFmpeg）
-bash tool/build_ffmpeg_bridge_posix.sh
-flutter build linux --release          # Linux
-# 或
-flutter build macos --release
-bash tool/bundle_macos.sh              # macOS：把 FFmpeg dylib 打进 .app 并重签名
+# 编译 FFmpeg 桥、flutter build、把系统 libmpv 打进 bundle（自包含）、
+# 打包 dist/asmr_hub-linux-x64.tar.gz
+# 依赖：libgtk-3-dev ninja-build clang cmake pkg-config + FFmpeg 开发库 + libmpv-dev
+bash tool/build_linux.sh
+```
+
+### macOS
+
+```bash
+# 编译 FFmpeg 桥、flutter build、把 FFmpeg dylib 打进 .app 并重签名、
+# 打包 dist/asmr_hub-macos-<arch>.zip
+# 依赖：Xcode + Homebrew FFmpeg
+bash tool/build_macos.sh
 ```
 
 ### Android
 
 ```bash
-flutter pub get
-# 用 NDK 交叉编译 FFmpeg 7.1 到 android/app/src/main/jniLibs/（可跳过：
-# 没有它 APK 也能构建，只是下载/录音功能不可用）
-bash tool/build_ffmpeg_android.sh
-flutter build apk --release
+# （可选）NDK 交叉编译 FFmpeg 7.1 到 jniLibs（没有它 APK 也能构建，
+# 只是下载/录音功能不可用）、flutter build apk、复制 dist/asmr_hub-android.apk
+bash tool/build_android.sh
 ```
 
-> 完整版 libmpv（含 lavfi 音效滤镜）在 Windows 由构建脚本自动替换；
-> 其他平台使用 media_kit 捆绑的 libmpv。
+> 各平台均使用 media_kit 捆绑的 libmpv，已实测支持 lavfi 音效滤镜，无需额外替换。
 
 ## 项目结构
 

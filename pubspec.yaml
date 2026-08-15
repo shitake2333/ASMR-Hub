@@ -65,8 +65,8 @@ dependencies:
   nativeapi: ^0.1.4
   media_kit: ^1.2.6
   # Native libmpv for all desktop/mobile platforms (Windows/Linux/macOS/
-  # Android/iOS). On Windows this bundles the "video" libmpv build; the full
-  # build with lavfi filters is swapped in by tool/build_windows.ps1.
+  # Android/iOS). The bundled builds support the lavfi audio filters used by
+  # the app's effects, so no manual libmpv replacement is needed.
   media_kit_libs_video: ^1.0.7
 
 dev_dependencies:

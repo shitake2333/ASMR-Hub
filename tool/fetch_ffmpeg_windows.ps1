@@ -21,26 +21,26 @@ $ffmpegVersion = '7.1'
 $ffmpegUrl = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n${ffmpegVersion}-latest-win64-gpl-shared-7.1.zip"
 $cacheDir = Join-Path $env:LOCALAPPDATA 'ASMRHub\ffmpeg_cache'
 $zipPath = Join-Path $cacheDir 'ffmpeg-win64-shared.zip'
-$extractDir = Join-Path $cacheDir "ffmpeg-n${ffmpegVersion}"
 
 New-Item -ItemType Directory -Path $cacheDir -Force | Out-Null
 
-if (-not (Test-Path (Join-Path $extractDir 'bin'))) {
+# The zip's top-level directory name may vary (e.g. ffmpeg-n7.1-latest-
+# win64-gpl-shared-7.1); locate bin/ dynamically instead of hardcoding it.
+$ffBin = Get-ChildItem $cacheDir -Recurse -Directory -Filter 'bin' |
+  Select-Object -First 1 -ExpandProperty FullName
+
+if (-not $ffBin) {
   if (-not (Test-Path $zipPath)) {
     Write-Host "Downloading FFmpeg $ffmpegVersion shared build..."
     Invoke-WebRequest -Uri $ffmpegUrl -OutFile $zipPath -UseBasicParsing
   }
   Write-Host 'Extracting FFmpeg...'
   Expand-Archive -Path $zipPath -DestinationPath $cacheDir -Force
-}
-
-$ffBin = Join-Path $extractDir 'bin'
-if (-not (Test-Path $ffBin)) {
-  # Expand-Archive may create a nested folder; find bin/.
-  $ffBin = Get-ChildItem $extractDir -Recurse -Directory -Filter 'bin' |
+  $ffBin = Get-ChildItem $cacheDir -Recurse -Directory -Filter 'bin' |
     Select-Object -First 1 -ExpandProperty FullName
   if (-not $ffBin) { throw 'FFmpeg bin/ not found after extraction' }
 }
+$extractDir = Split-Path $ffBin -Parent
 
 Write-Host "FFmpeg binaries at: $ffBin"
 

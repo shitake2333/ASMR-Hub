@@ -69,21 +69,12 @@ jobs:
           sudo apt-get install -y --no-install-recommends \
             clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev \
             libstdc++-13-dev \
-            libavformat-dev libavcodec-dev libavutil-dev libswresample-dev
+            libavformat-dev libavcodec-dev libavutil-dev libswresample-dev \
+            libmpv-dev
 
-      # Compiles libffmpeg_bridge.so against the system FFmpeg; the CMake
-      # install step bundles it into the app's lib/ directory.
-      - name: Build FFmpeg bridge
-        run: bash tool/build_ffmpeg_bridge_posix.sh
-
+      # Bridge + flutter build + bundle system libmpv + tar.gz.
       - name: Build Linux bundle
-        run: flutter build linux --release
-
-      - name: Package
-        run: |
-          mkdir -p dist
-          tar -C build/linux/x64/release/bundle -czf dist/asmr_hub-linux-x64.tar.gz .
-          ls -lh dist
+        run: bash tool/build_linux.sh
 
       - uses: actions/upload-artifact@v4
         with:
@@ -118,25 +109,9 @@ jobs:
       - name: Install FFmpeg (Homebrew)
         run: brew install ffmpeg
 
-      # Compiles libffmpeg_bridge.dylib against Homebrew FFmpeg.
-      - name: Build FFmpeg bridge
-        run: bash tool/build_ffmpeg_bridge_posix.sh
-
-      - name: Build macOS app
-        run: flutter build macos --release
-
-      # Copies the bridge + FFmpeg dylibs into the .app, rewrites install
-      # names and ad-hoc re-signs.
-      - name: Bundle FFmpeg dylibs
-        run: bash tool/bundle_macos.sh
-
-      - name: Package
-        run: |
-          mkdir -p dist
-          ditto -c -k --keepParent \
-            "build/macos/Build/Products/Release/ASMR Hub.app" \
-            "dist/asmr_hub-macos-${{ matrix.arch }}.zip"
-          ls -lh dist
+      # Bridge + flutter build + bundle FFmpeg dylibs + zip.
+      - name: Build macOS bundle
+        run: bash tool/build_macos.sh
 
       - uses: actions/upload-artifact@v4
         with:
@@ -168,19 +143,14 @@ jobs:
       - name: Install NDK
         run: sdkmanager "ndk;28.2.13676358"
 
-      # Builds FFmpeg 7.1 .so files for arm64-v8a / armeabi-v7a / x86_64 so
-      # the Gradle CMake step can compile libffmpeg_bridge.so (download and
-      # live recording work on Android).
-      - name: Build Android FFmpeg
-        run: bash tool/build_ffmpeg_android.sh
-
+      # FFmpeg (jniLibs) + flutter build apk + copy into dist/.
       - name: Build APK
-        run: flutter build apk --release
+        run: bash tool/build_android.sh
 
       - uses: actions/upload-artifact@v4
         with:
           name: asmr_hub-android
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: dist/asmr_hub-android.apk
           retention-days: 14
 
   release:

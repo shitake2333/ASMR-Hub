@@ -113,34 +113,39 @@ automatically by `.github/workflows/release.yml` on tags):
 
 ```powershell
 # Fetch FFmpeg DLLs, compile ffmpeg_bridge.dll (MinGW), flutter build,
-# swap in the full libmpv (lavfi filters), package dist/asmr_hub-windows-x64.zip
+# package dist/asmr_hub-windows-x64.zip
 powershell -File tool/build_windows.ps1 -Release
 ```
 
-### Linux / macOS
+### Linux
 
 ```bash
-flutter pub get
-# Compile the FFmpeg bridge (libffmpeg_bridge.so / .dylib against system/Homebrew FFmpeg)
-bash tool/build_ffmpeg_bridge_posix.sh
-flutter build linux --release          # Linux
-# or
-flutter build macos --release
-bash tool/bundle_macos.sh              # macOS: bundle FFmpeg dylibs into the .app and re-sign
+# FFmpeg bridge + flutter build + bundle the system libmpv (self-contained)
+# + package dist/asmr_hub-linux-x64.tar.gz
+# Deps: libgtk-3-dev ninja-build clang cmake pkg-config + FFmpeg dev libs + libmpv-dev
+bash tool/build_linux.sh
+```
+
+### macOS
+
+```bash
+# FFmpeg bridge + flutter build + bundle FFmpeg dylibs into the .app and
+# re-sign + package dist/asmr_hub-macos-<arch>.zip
+# Deps: Xcode + Homebrew FFmpeg
+bash tool/build_macos.sh
 ```
 
 ### Android
 
 ```bash
-flutter pub get
-# Cross-compile FFmpeg 7.1 with the NDK into android/app/src/main/jniLibs/
-# (optional: without it the APK still builds, download/recording just won't work)
-bash tool/build_ffmpeg_android.sh
-flutter build apk --release
+# (Optional) NDK cross-compile of FFmpeg 7.1 into jniLibs (without it the APK
+# still builds, download/recording just won't work) + flutter build apk
+# + copy dist/asmr_hub-android.apk
+bash tool/build_android.sh
 ```
 
-> The full libmpv (with lavfi audio filters) is swapped in automatically by the
-> Windows build script; other platforms use media_kit's bundled libmpv.
+> Every platform uses media_kit's bundled libmpv, which is verified to
+> support the lavfi audio filters — no manual replacement is needed.
 
 ## Project Structure
 
