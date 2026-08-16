@@ -1328,6 +1328,12 @@ abstract class AppLocalizations {
   /// **'Audio Effects'**
   String get audioEffects;
 
+  /// No description provided for @audioEffectsUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio effects are not supported on this platform (Android\'s libmpv lacks the lavfi filters)'**
+  String get audioEffectsUnsupported;
+
   /// No description provided for @effectNoiseReduction.
   ///
   /// In en, this message translates to:

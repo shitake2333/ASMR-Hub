@@ -15,6 +15,24 @@ class EffectsList extends StatelessWidget {
     final effects = effectsProvider.effects;
     final l10n = AppLocalizations.of(context)!;
 
+    if (!EffectsProvider.supported) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(
+              Icons.info_outline,
+              size: 20,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(width: 8),
+            Expanded(child: Text(l10n.audioEffectsUnsupported)),
+          ],
+        ),
+      );
+    }
+
     return ListView.builder(
       controller: controller,
       padding: EdgeInsets.zero,

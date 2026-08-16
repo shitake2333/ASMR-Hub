@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:media_kit/media_kit.dart';
 
@@ -172,6 +173,15 @@ class MpvPlayerEngine {
   /// Applies an mpv audio filter chain (lavfi), e.g. for limiter/low-pass.
   Future<void> setAudioFilter(String? chain) async {
     if (!_ensurePlayer()) return;
+    // media_kit's Android libmpv ships an FFmpeg whose libavfilter lacks the
+    // filters the app uses (alimiter/lowpass) — applying the chain only
+    // produces "No such filter" errors and no effect. Skip it there.
+    if (Platform.isAndroid) {
+      LogService().info(
+        'setAudioFilter: lavfi effects are not supported on Android, skipping',
+      );
+      return;
+    }
     try {
       final p = _player!.platform;
       if (p == null) return;

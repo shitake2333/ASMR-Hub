@@ -365,6 +365,7 @@
   "sourceLocal": "Local Files",
   "unknownArtist": "Unknown Artist",
   "audioEffects": "Audio Effects",
+  "audioEffectsUnsupported": "Audio effects are not supported on this platform (Android's libmpv lacks the lavfi filters)",
   "effectNoiseReduction": "Noise Reduction",
   "effectNoiseReductionDesc": "Reduces high frequency noise like static or fans.",
   "effectSafeSleep": "Safe Sleep",

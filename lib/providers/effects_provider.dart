@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 
 import 'package:asmr_hub/effects/audio_effect.dart';
@@ -9,6 +11,10 @@ import 'package:asmr_hub/services/log_service.dart';
 /// Manages audio effects (noise reduction, safe sleep) and translates them
 /// into an mpv `af` filter chain applied to the player engine.
 class EffectsProvider extends ChangeNotifier {
+  /// Whether the platform's libmpv can run the lavfi filters the effects use
+  /// (alimiter/lowpass). media_kit's Android build lacks them, so effects are
+  /// unavailable there.
+  static bool get supported => !Platform.isAndroid;
   final List<AudioEffect> _effects = [
     NoiseReductionEffect(),
     SafeSleepEffect(),

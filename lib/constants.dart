@@ -6,7 +6,7 @@ class AppConstants {
   static const String appVersion = '1.0.0';
   static const String appDeveloper = 'shitake233';
   static const String appEmail = 'z1522716486@hotmail.com';
-  static const String githubUrl = 'https://github.com/shitake233/asmr_hub';
+  static const String githubUrl = 'https://github.com/shitake2333/ASMR-Hub';
 
   static const String appLicense = '''MIT License
 

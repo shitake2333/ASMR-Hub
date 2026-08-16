@@ -21,6 +21,7 @@ cd "$(dirname "$0")/.."
 FF_VERSION="7.1"
 API=24
 JNI="android/app/src/main/jniLibs"
+MBEDTLS_VERSION="3.6.7"
 
 echo "==> Locating NDK..."
 NDK="${ANDROID_NDK_ROOT:-${ANDROID_NDK:-}}"
@@ -59,15 +60,47 @@ if [ ! -d "$SRC" ]; then
   tar -xf "$WORK/ffmpeg.tar.xz" -C "$WORK"
 fi
 
+# ---- mbedtls (TLS backend so https URLs work) --------------------------------
+# FFmpeg's https protocol needs a TLS library; without one the bridge cannot
+# open https URLs (all Bilibili streams etc.). Cross-compile mbedtls per ABI
+# and statically link it into libavformat.so (no extra .so to ship).
+MBEDTLS_SRC="$WORK/mbedtls-$MBEDTLS_VERSION"
+if [ ! -d "$MBEDTLS_SRC" ]; then
+  echo "==> Downloading mbedtls $MBEDTLS_VERSION..."
+  curl -L --retry 3 -o "$WORK/mbedtls.tar.gz" \
+    "https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v$MBEDTLS_VERSION.tar.gz"
+  tar -xzf "$WORK/mbedtls.tar.gz" -C "$WORK"
+fi
+
+build_mbedtls() {
+  local abi="$1"
+  local prefix="$WORK/mbedtls-$abi"
+  local bdir="$WORK/mbedtls-build-$abi"
+  echo "==> Building mbedtls for $abi ..."
+  cmake -S "$MBEDTLS_SRC" -B "$bdir" \
+    -DCMAKE_TOOLCHAIN_FILE="$NDK/build/cmake/android.toolchain.cmake" \
+    -DANDROID_ABI="$abi" \
+    -DANDROID_PLATFORM="android-$API" \
+    -DCMAKE_INSTALL_PREFIX="$prefix" \
+    -DENABLE_PROGRAMS=OFF -DENABLE_TESTING=OFF -DENABLE_ZLIB_SUPPORT=OFF \
+    -DCMAKE_BUILD_TYPE=Release >/dev/null
+  cmake --build "$bdir" -j"$(nproc 2>/dev/null || echo 2)" >/dev/null
+  cmake --install "$bdir" >/dev/null
+}
+
 # ---- Build per ABI ----------------------------------------------------------
 build_abi() {
   local abi="$1" arch="$2" cc_suffix="$3" extra=("${@:4}")
   echo "==> Building FFmpeg for $abi ..."
+  local mbed="$WORK/mbedtls-$abi"
+  build_mbedtls "$abi"
   local bdir="$WORK/build-$abi"
   mkdir -p "$bdir"
   (
     cd "$SRC"
     make distclean >/dev/null 2>&1 || true
+    # Let FFmpeg's configure find mbedtls via its pkg-config file.
+    export PKG_CONFIG_PATH="$mbed/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
     ./configure \
       --prefix="$bdir/install" \
       --target-os=android \
@@ -88,6 +121,9 @@ build_abi() {
       --disable-postproc \
       --disable-avfilter \
       --disable-swscale \
+      --enable-mbedtls \
+      --extra-cflags="-I$mbed/include" \
+      --extra-ldflags="-L$mbed/lib" \
       "${extra[@]}"
     make -j"$(nproc 2>/dev/null || echo 2)" >/dev/null
     make install >/dev/null

@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -670,6 +671,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get audioEffects => '音效';
+
+  @override
+  String get audioEffectsUnsupported =>
+      '当前平台的 libmpv 不支持音效滤镜（Android 暂缺 lavfi 滤镜），音效功能不可用';
 
   @override
   String get effectNoiseReduction => '降噪';

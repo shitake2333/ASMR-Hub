@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -678,6 +679,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get audioEffects => 'Audio Effects';
+
+  @override
+  String get audioEffectsUnsupported =>
+      'Audio effects are not supported on this platform (Android\'s libmpv lacks the lavfi filters)';
 
   @override
   String get effectNoiseReduction => 'Noise Reduction';

@@ -240,6 +240,7 @@
   "sourceLocal": "本地文件",
   "unknownArtist": "未知艺术家",
   "audioEffects": "音效",
+  "audioEffectsUnsupported": "当前平台的 libmpv 不支持音效滤镜（Android 暂缺 lavfi 滤镜），音效功能不可用",
   "effectNoiseReduction": "降噪",
   "effectNoiseReductionDesc": "减少如静电或风扇等高频噪音。",
   "effectSafeSleep": "安全睡眠",
