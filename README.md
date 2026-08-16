@@ -91,7 +91,7 @@ ASMR Hub 是一个跨平台 Flutter 应用，聚合并播放来自多平台的 A
 - **Windows**：`asmr_hub-windows-x64.zip`（解压即用）
 - **Android**：`asmr_hub-android.apk`
 - **Linux**：`asmr_hub-linux-x64.tar.gz`
-- **macOS**：`asmr_hub-macos-arm64.zip` / `asmr_hub-macos-x64.zip`
+- **macOS**：`asmr_hub-macos-arm64.zip`（Apple Silicon；Intel Mac 请从源码构建）
 
 ## 从源码构建
 

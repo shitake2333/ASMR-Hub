@@ -83,17 +83,12 @@ jobs:
           retention-days: 14
 
   macos:
-    name: macOS ${{ matrix.arch }}
-    runs-on: ${{ matrix.os }}
+    # Apple Silicon only for now: the Intel (macos-13) runner pool queues for
+    # a long time and stalls releases. Re-add macos-13 when Intel builds are
+    # needed (Intel Macs can build from source: bash tool/build_macos.sh).
+    name: macOS (arm64)
+    runs-on: macos-15
     timeout-minutes: 120
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: macos-15
-            arch: arm64
-          - os: macos-13
-            arch: x64
     steps:
       - uses: actions/checkout@v4
 
@@ -115,8 +110,8 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: asmr_hub-macos-${{ matrix.arch }}
-          path: dist/asmr_hub-macos-${{ matrix.arch }}.zip
+          name: asmr_hub-macos-arm64
+          path: dist/asmr_hub-macos-arm64.zip
           retention-days: 14
 
   android:

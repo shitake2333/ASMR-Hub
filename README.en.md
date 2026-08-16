@@ -97,7 +97,7 @@ automatically by `.github/workflows/release.yml` on tags):
 - **Windows**: `asmr_hub-windows-x64.zip` (unzip and run)
 - **Android**: `asmr_hub-android.apk`
 - **Linux**: `asmr_hub-linux-x64.tar.gz`
-- **macOS**: `asmr_hub-macos-arm64.zip` / `asmr_hub-macos-x64.zip`
+- **macOS**: `asmr_hub-macos-arm64.zip` (Apple Silicon; Intel Macs: build from source)
 
 ## Building from Source
 
